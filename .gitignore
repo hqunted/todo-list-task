@@ -9,6 +9,12 @@
 
 # dependencies
 /node_modules
+/gradle
+/.gradle
+/classpath:
+/todo-list-backend/bin
+/todo-list-backend/build
+/todo-list-frontend/node_modules
 
 # profiling files
 chrome-profiler-events*.json
