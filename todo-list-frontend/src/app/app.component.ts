@@ -11,7 +11,6 @@ import {Observable} from "rxjs";
       </h1>
     </div>
     <div class="list">
-      <label for="search">Search...</label>
       <app-search-bar
         [todos]="todos"
         (filteredTodos)="updateFilteredTodos($event)"
@@ -27,18 +26,23 @@ import {Observable} from "rxjs";
 })
 export class AppComponent {
 
-  readonly todos$: Observable<Todo[]>;
   todos: Todo[] = [];
   filteredTodos: Todo[] = [];
   isLoading = true;
 
   constructor(private todoService: TodoService) {
-    this.todos$ = todoService.getAll();
-    this.todos$.subscribe((todos) => {
-      this.isLoading = false;
-      this.todos = todos;
-      this.filteredTodos = todos;
-    });
+    this.todoService.getTodos().subscribe(
+      (todos) => {
+        this.todos = todos;
+        this.filteredTodos = todos;
+        this.isLoading = false;
+        console.log("Todos fetched:", todos);
+      },
+      (error) => {
+        console.error("Error fetching todos:", error);
+        this.isLoading = false;
+      }
+    );
   }
 
   updateFilteredTodos(filtered: Todo[]) {

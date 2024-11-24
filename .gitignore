@@ -8,13 +8,18 @@
 /bazel-out
 
 # dependencies
-/node_modules
-/gradle
-/.gradle
-/classpath:
-/todo-list-backend/bin
 /todo-list-backend/build
+/todo-list-backend/bin
+/classpath:
+/todo-list-frontend/build
 /todo-list-frontend/node_modules
+/todo-list-backend/node_modules
+/todo-list-frontend/dist
+/todo-list-backend/data
+/.gradle
+/gradle
+/.vscode
+
 
 # profiling files
 chrome-profiler-events*.json

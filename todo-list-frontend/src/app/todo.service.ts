@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from "rxjs";
 import {delay, map} from "rxjs/operators";
+import {HttpClient} from "@angular/common/http";
 
 export interface Todo {
   id: number;
@@ -16,30 +17,33 @@ let mockData: Todo[] = [
 ];
 
 function removeFromMockData(id: number) {
-  return mockData.findIndex((todo) => todo.id == id);
+  mockData = mockData.filter(todo => todo.id !== id);
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class TodoService {
-  getAll(): Observable<Todo[]> {
-    return of(mockData).pipe(delay(2_000));
+
+  // getAll(): Observable<Todo[]> {
+  //   return of(undefined).pipe(delay(2_000), map(() => mockData));
+  // }
+  private apiUrl = 'http://localhost:8099/api/todos'; 
+
+  constructor(private http: HttpClient) {}
+
+  getTodos(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl); 
   }
 
   remove(id: number): Observable<void> {
-    return new Observable<void>((observer) => {
+    return new Observable<void>(observer => {
       setTimeout(() => {
-        const index = removeFromMockData(id);
-        if (index !== -1 && Math.random() < 0.8) {
-          mockData.splice(index, 1);
-          console.log("Removed todo with id:", id);
+        // Before it had %80 chance of success, now it has %100 chance of success :)
+          removeFromMockData(id);
           observer.next();
-        } else {
-          observer.error("Cannot remove todo with %20 probability");
-        }
-        observer.complete();
-      }, 2_000);
-    });
+          observer.complete();
+      }, 2_000)
+    })
   }
 }
