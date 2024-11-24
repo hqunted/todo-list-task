@@ -1,5 +1,7 @@
-import {Component, Input} from '@angular/core';
-import {Todo} from "../todo.service";
+import { Component, Input } from "@angular/core";
+import { Todo } from "../todo.service";
+import { ChangeDetectorRef } from "@angular/core";
+import { TodoService } from "../todo.service";
 
 @Component({
   selector: 'app-todo-item',
@@ -10,6 +12,7 @@ import {Todo} from "../todo.service";
     <div class="priority-indicator" [style.background-color]="color">
       {{ item.priority }}
     </div>
+    <button (click)="remove(item.id)">x</button>
   `,
   styleUrls: ['todo-item.component.scss']
 })
@@ -26,5 +29,18 @@ export class TodoItemComponent {
       case 3:
         return 'red';
     }
+  }
+
+  constructor(
+    private todoService: TodoService,
+    private cdr: ChangeDetectorRef
+  ) {}
+  remove(id: number) {
+    this.todoService.remove(id).subscribe({
+      next: () => {},
+      error: (err) => {
+        console.error(err);
+      },
+    });
   }
 }

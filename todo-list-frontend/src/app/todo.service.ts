@@ -16,29 +16,30 @@ let mockData: Todo[] = [
 ];
 
 function removeFromMockData(id: number) {
-  mockData = mockData.filter(todo => todo.id !== id);
+  return mockData.findIndex((todo) => todo.id == id);
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class TodoService {
-
   getAll(): Observable<Todo[]> {
-    return of(undefined).pipe(delay(2_000), map(() => mockData));
+    return of(mockData).pipe(delay(2_000));
   }
 
   remove(id: number): Observable<void> {
-    return new Observable<void>(observer => {
+    return new Observable<void>((observer) => {
       setTimeout(() => {
-        if (Math.random() < .8) {
-          removeFromMockData(id);
+        const index = removeFromMockData(id);
+        if (index !== -1 && Math.random() < 0.8) {
+          mockData.splice(index, 1);
+          console.log("Removed todo with id:", id);
           observer.next();
         } else {
-          observer.error('Failed');
+          observer.error("Cannot remove todo with %20 probability");
         }
         observer.complete();
-      }, 2_000)
-    })
+      }, 2_000);
+    });
   }
 }
