@@ -12,9 +12,15 @@ import {Observable} from "rxjs";
     </div>
     <div class="list">
       <label for="search">Search...</label>
-      <input id="search" type="text">
-      <app-progress-bar *ngIf="IsLoading"></app-progress-bar>
-      <app-todo-item *ngFor="let todo of todos$ | async" [item]="todo"></app-todo-item>
+      <app-search-bar
+        [todos]="todos"
+        (filteredTodos)="updateFilteredTodos($event)"
+      ></app-search-bar>
+      <app-progress-bar *ngIf="isLoading"></app-progress-bar>
+      <app-todo-item
+        *ngFor="let todo of filteredTodos"
+        [item]="todo"
+      ></app-todo-item>
     </div>
   `,
   styleUrls: ['app.component.scss']
@@ -22,9 +28,20 @@ import {Observable} from "rxjs";
 export class AppComponent {
 
   readonly todos$: Observable<Todo[]>;
-  IsLoading = true;
-  constructor(todoService: TodoService) {
+  todos: Todo[] = [];
+  filteredTodos: Todo[] = [];
+  isLoading = true;
+
+  constructor(private todoService: TodoService) {
     this.todos$ = todoService.getAll();
-    this.todos$.subscribe(() => this.IsLoading = false);
+    this.todos$.subscribe((todos) => {
+      this.isLoading = false;
+      this.todos = todos;
+      this.filteredTodos = todos;
+    });
+  }
+
+  updateFilteredTodos(filtered: Todo[]) {
+    this.filteredTodos = filtered;
   }
 }
